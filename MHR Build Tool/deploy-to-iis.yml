@@ -3,7 +3,7 @@ name: Deployment to IIS on Azure VM
 on:
     push:
         branches:
-        - main
+        - master
 
 jobs:
     build-and-deploy:
