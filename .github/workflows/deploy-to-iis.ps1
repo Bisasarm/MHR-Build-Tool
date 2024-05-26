@@ -45,15 +45,15 @@ function Deploy-Application{
 
     # Alte Dateien entfernen
     Write-Host "Alte Files entfernen"
-    Remove-Item -Recurse -Force -Path $sitePath\*
+    #Remove-Item -Recurse -Force -Path $sitePath\*
 
     # Neue Files von Quelle rüberkopieren
     Write-Host "Kopieren neuer Files auf Zielmaschine"
-    Copy-Item -Recurse -Force -Path $sourcePath\* -Destination $sitePath
+    #Copy-Item -Recurse -Force -Path $sourcePath\* -Destination $sitePath
 
     # Starten der Seite
     Write-Host "Seite wird mit neuen Files gestartet"
-    Start-Website -Name $siteName
+    #Start-Website -Name $siteName
 
     Write-Host "Deployment durchgeführt"
 }
