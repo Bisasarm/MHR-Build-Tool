@@ -27,18 +27,13 @@ jobs:
             - name: Publish the project
               run: dotnet publish MHRBuildTool/MHRBuildTool.sln -c Release -o publish
 
-            - name: Check if target directory exists on Azure VM
+            - name: Ensure target directory exists on Azure VM
               run: |
-                sshpass -p "${{ secrets.VM_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USERNAME }}@${{ secrets.VM_IP }} "powershell -Command \"Test-Path 'C:\\Web\\MHRBuildTool'\""
-              id: check-directory
+                sshpass -p "${{ secrets.VM_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USERNAME }}@${{ secrets.VM_IP }} "powershell -Command \"if (!(Test-Path 'C:\\Web\\MHRBuildTool')) { New-Item -Path 'C:\\Web\\MHRBuildTool' -ItemType Directory -Force } else { Remove-Item -Recurse -Force 'C:\\Web\\MHRBuildTool\\*' }\""
 
             - name: Clean target directory on Azure VM
               run: |
                 sshpass -p "${{ secrets.VM_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USERNAME }}@${{ secrets.VM_IP }} "powershell -Command \"Remove-Item -Recurse -Force 'C:\\Web\\MHRBuildTool\\*'\""
-
-            - name: Ensure target directory exists on Azure VM
-              run: |
-                sshpass -p "${{ secrets.VM_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USERNAME }}@${{ secrets.VM_IP }} "powershell -Command \"New-Item -Path 'C:\\Web\\MHRBuildTool' -ItemType Directory -Force\""
               
             - name: Copy files to Azure VM. Including the published project as well as the PowerShell script
               run: |
