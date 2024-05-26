@@ -27,11 +27,15 @@ jobs:
             - name: Publish the project
               run: dotnet publish MHRBuildTool/MHRBuildTool.sln -c Release -o publish
 
+            - name: Ensure target directory exists on Azure VM
+              run: |
+                sshpass -p "${{ secrets.VM_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USERNAME }}@${{ secrets.VM_IP }} "powershell -Command \"New-Item -Path 'C:\\Web\\MHRBuildTool' -ItemType Directory -Force\""
+              
             - name: Copy files to Azure VM. Including the published project as well as the PowerShell script
               run: |
-                  sshpass -p "${{ secrets.VM_PASSWORD }}" scp -o StrictHostKeyChecking=no -r ./publish ${{ secrets.VM_USERNAME }}@${{ secrets.VM_IP }}:C:Web/MHRBuildTool
-                  sshpass -p "${{ secrets.VM_PASSWORD }}" scp -o StrictHostKeyChecking=no ./deploy-to-iis.ps1 ${{ secrets.VM_USERNAME }}@${{ secrets.VM_IP }}:C:Web/deploy-to-iis.ps1
-
+                sshpass -p "${{ secrets.VM_PASSWORD }}" scp -v -o ConnectTimeout=60 -o StrictHostKeyChecking=no -r ./publish/* ${{ secrets.VM_USERNAME }}@${{ secrets.VM_IP }}:"C:/Web/MHRBuildTool/"
+                sshpass -p "${{ secrets.VM_PASSWORD }}" scp -v -o ConnectTimeout=60 -o StrictHostKeyChecking=no ./deploy-to-iis.ps1 ${{ secrets.VM_USERNAME }}@${{ secrets.VM_IP }}:"C:/Web/deploy-to-iis.ps1"
+           
             - name: Run deployment script on Azure VM
               run: |
                   sshpass -p "${{ secrets.VM_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USERNAME }}@${{ secrets.VM_IP }} powershell.exe -File /var/www/deploy-to-iis.ps1 -siteName "MHRBuildTool" -sitePath "C:\inetpub\wwwroot\MHRBuildTool" -sourcePath "C:Web/MHRBuildTool" -port 8080
