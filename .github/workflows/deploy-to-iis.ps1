@@ -25,6 +25,10 @@ function Create-IISSiteIfNotExists{
     $site = Get-Website -Name $siteName -ErrorAction SilentlyContinue
     if($site -eq $null){
         Write-Host "IIS Seite existiert nicht. Neue Seite wird erstellt"
+        # Check oh physischer Pfad schon existiert, ansonsten create
+        if (!(Test-Path $_sitePath)) {
+            New-Item -Path $_sitePath -ItemType Directory -Force
+        }
         New-Website -Name $siteName -PhysicalPath $sitePath -Port $port
     }
     else{
@@ -39,21 +43,27 @@ function Deploy-Application{
         [string]$sitePath,
         [string]$sourcePath
     )
+    # Validierung der Parameter um nukleares Löschen zu verhindern
+    if (-not ($_siteName -and $_sitePath -and $_sourcePath -and $_port)) {
+        Write-Error "One or more parameters are null or empty."
+        exit 1
+    }
+    
     # IIS Stopp
     Write-Host "IIS Stopp"
     Stop-Website -Name $siteName
 
     # Alte Dateien entfernen
     Write-Host "Alte Files entfernen"
-    #Remove-Item -Recurse -Force -Path $sitePath\*
+    Remove-Item -Recurse -Force -Path $sitePath\*
 
     # Neue Files von Quelle rüberkopieren
     Write-Host "Kopieren neuer Files auf Zielmaschine"
-    #Copy-Item -Recurse -Force -Path $sourcePath\* -Destination $sitePath
+    Copy-Item -Recurse -Force -Path $sourcePath\* -Destination $sitePath
 
     # Starten der Seite
     Write-Host "Seite wird mit neuen Files gestartet"
-    #Start-Website -Name $siteName
+    Start-Website -Name $siteName
 
     Write-Host "Deployment durchgeführt"
 }
