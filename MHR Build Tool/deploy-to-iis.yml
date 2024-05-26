@@ -1,0 +1,45 @@
+name: Deployment to IIS on Azure VM
+
+on:
+    push:
+        branches:
+        - main
+
+jobs:
+    build-and-deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v2
+
+            - name: Set up .NET Core
+              uses: actions/setup-dotnet@v2
+              with:
+                dotnet-version: '8.0.x'
+
+            - name: Restore Dependencies, download and install required NuGet packages
+              run: dotnet restore
+
+            - name: Build the project and compile application in 'Release' configuration
+              run: dotnet build --configuation Release --no-restore
+
+            - name: Publish the project
+              run: dotnet publish -c Release -o publish
+
+            - name: Copy files to Azure VM. Including the published project as well as the PowerShell script
+              run: |
+                  sshpass -p "${{ secrets.VM_PASSWORD }}" scp -o StrictHostKeyChecking=no -r ./publish ${{ secrets.VM_USERNAME }}@${{ secrets.VM_IP }}:/var/www/MHR_Build_Tool
+                  sshpass -p "${{ secrets.VM_PASSWORD }}" scp -o StrictHostKeyChecking=no ./deploy-to-iis.ps1 ${{ secrets.VM_USERNAME }}@${{ secrets.VM_IP }}:/var/www/deploy-to-iis.ps1
+
+            - name: Run deployment script on Azure VM
+              run: |
+                  sshpass -p "${{ secrets.VM_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USERNAME }}@${{ secrets.VM_IP }} powershell.exe -File /var/www/deploy-to-iis.ps1 -siteName "MHR_Build_Tool" -sitePath "C:\inetpub\wwwroot\MHR_Build_Tool" -sourcePath "/var/www/MHR_Build_Tool" -port 8080
+
+        env:
+            VM_IP: ${{secrets.VM_IP}}
+            VM_USERNAME: ${{secrets.VM_USERNAME}}
+            VM_PASSWORD: ${{secrets.VM_PASSWORD}}
+
+
+            
