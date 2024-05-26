@@ -27,6 +27,10 @@ jobs:
             - name: Publish the project
               run: dotnet publish MHRBuildTool/MHRBuildTool.sln -c Release -o publish
 
+            - name: Clean target directory on Azure VM
+              run: |
+                sshpass -p "${{ secrets.VM_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USERNAME }}@${{ secrets.VM_IP }} "powershell -Command \"Remove-Item -Recurse -Force 'C:\\Web\\MHRBuildTool\\*'\""
+
             - name: Ensure target directory exists on Azure VM
               run: |
                 sshpass -p "${{ secrets.VM_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USERNAME }}@${{ secrets.VM_IP }} "powershell -Command \"New-Item -Path 'C:\\Web\\MHRBuildTool' -ItemType Directory -Force\""
@@ -34,7 +38,7 @@ jobs:
             - name: Copy files to Azure VM. Including the published project as well as the PowerShell script
               run: |
                 sshpass -p "${{ secrets.VM_PASSWORD }}" scp -v -o ConnectTimeout=60 -o StrictHostKeyChecking=no -r ./publish/* ${{ secrets.VM_USERNAME }}@${{ secrets.VM_IP }}:"C:/Web/MHRBuildTool/"
-                sshpass -p "${{ secrets.VM_PASSWORD }}" scp -v -o ConnectTimeout=60 -o StrictHostKeyChecking=no ./deploy-to-iis.ps1 ${{ secrets.VM_USERNAME }}@${{ secrets.VM_IP }}:"C:/Web/deploy-to-iis.ps1"
+                sshpass -p "${{ secrets.VM_PASSWORD }}" scp -v -o ConnectTimeout=60 -o StrictHostKeyChecking=no .github/workflows/deploy-to-iis.ps1 ${{ secrets.VM_USERNAME }}@${{ secrets.VM_IP }}:"C:/Web/deploy-to-iis.ps1"
            
             - name: Run deployment script on Azure VM
               run: |
