@@ -29,8 +29,8 @@ jobs:
 
             - name: Copy files to Azure VM. Including the published project as well as the PowerShell script
               run: |
-                  sshpass -p "${{ secrets.VM_PASSWORD }}" scp -o StrictHostKeyChecking=no -r ./publish ${{ secrets.VM_USERNAME }}@${{ secrets.VM_IP }}:/var/www/MHRBuildTool
-                  sshpass -p "${{ secrets.VM_PASSWORD }}" scp -o StrictHostKeyChecking=no ./deploy-to-iis.ps1 ${{ secrets.VM_USERNAME }}@${{ secrets.VM_IP }}:/var/www/deploy-to-iis.ps1
+                  sshpass -p "${{ secrets.VM_PASSWORD }}" scp -o StrictHostKeyChecking=no -r ./publish ${{ secrets.VM_USERNAME }}@${{ secrets.VM_IP }}:C:Web/MHRBuildTool
+                  sshpass -p "${{ secrets.VM_PASSWORD }}" scp -o StrictHostKeyChecking=no ./deploy-to-iis.ps1 ${{ secrets.VM_USERNAME }}@${{ secrets.VM_IP }}:C:Web/deploy-to-iis.ps1
 
             - name: Run deployment script on Azure VM
               run: |
