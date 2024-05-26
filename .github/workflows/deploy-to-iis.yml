@@ -19,7 +19,7 @@ jobs:
                 dotnet-version: '8.0.x'
 
             - name: Restore Dependencies, download and install required NuGet packages
-              run: dotnet restore "../../MHR Build Tool/MHR Build Tool.sln"
+              run: dotnet restore --verbosity detailed "../../MHR Build Tool/MHR Build Tool.sln"
 
             - name: Build the project and compile application in 'Release' configuration
               run: dotnet build --configuation Release --no-restore
