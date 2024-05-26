@@ -27,6 +27,11 @@ jobs:
             - name: Publish the project
               run: dotnet publish MHRBuildTool/MHRBuildTool.sln -c Release -o publish
 
+            - name: Check if target directory exists on Azure VM
+              run: |
+                sshpass -p "${{ secrets.VM_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USERNAME }}@${{ secrets.VM_IP }} "powershell -Command \"Test-Path 'C:\\Web\\MHRBuildTool'\""
+              id: check-directory
+
             - name: Clean target directory on Azure VM
               run: |
                 sshpass -p "${{ secrets.VM_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USERNAME }}@${{ secrets.VM_IP }} "powershell -Command \"Remove-Item -Recurse -Force 'C:\\Web\\MHRBuildTool\\*'\""
