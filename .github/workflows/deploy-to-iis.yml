@@ -19,7 +19,7 @@ jobs:
                 dotnet-version: '8.0.x'
 
             - name: Restore Dependencies, download and install required NuGet packages
-              run: dotnet restore "MHR Build Tool.sln"
+              run: dotnet restore "MHRBuildTool.sln"
 
             - name: Build the project and compile application in 'Release' configuration
               run: dotnet build --configuation Release --no-restore
@@ -29,12 +29,12 @@ jobs:
 
             - name: Copy files to Azure VM. Including the published project as well as the PowerShell script
               run: |
-                  sshpass -p "${{ secrets.VM_PASSWORD }}" scp -o StrictHostKeyChecking=no -r ./publish ${{ secrets.VM_USERNAME }}@${{ secrets.VM_IP }}:/var/www/MHR_Build_Tool
+                  sshpass -p "${{ secrets.VM_PASSWORD }}" scp -o StrictHostKeyChecking=no -r ./publish ${{ secrets.VM_USERNAME }}@${{ secrets.VM_IP }}:/var/www/MHRBuildTool
                   sshpass -p "${{ secrets.VM_PASSWORD }}" scp -o StrictHostKeyChecking=no ./deploy-to-iis.ps1 ${{ secrets.VM_USERNAME }}@${{ secrets.VM_IP }}:/var/www/deploy-to-iis.ps1
 
             - name: Run deployment script on Azure VM
               run: |
-                  sshpass -p "${{ secrets.VM_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USERNAME }}@${{ secrets.VM_IP }} powershell.exe -File /var/www/deploy-to-iis.ps1 -siteName "MHR_Build_Tool" -sitePath "C:\inetpub\wwwroot\MHR_Build_Tool" -sourcePath "/var/www/MHR_Build_Tool" -port 8080
+                  sshpass -p "${{ secrets.VM_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USERNAME }}@${{ secrets.VM_IP }} powershell.exe -File /var/www/deploy-to-iis.ps1 -siteName "MHRBuildTool" -sitePath "C:\inetpub\wwwroot\MHRBuildTool" -sourcePath "/var/www/MHRBuildTool" -port 8080
 
         env:
             VM_IP: ${{secrets.VM_IP}}
