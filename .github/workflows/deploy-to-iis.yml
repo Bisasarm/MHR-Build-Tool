@@ -42,7 +42,7 @@ jobs:
            
             - name: Run deployment script on Azure VM
               run: |
-                  sshpass -p "${{ secrets.VM_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USERNAME }}@${{ secrets.VM_IP }} powershell.exe -File "C:/Web/deploy-to-iis.ps1" -siteName "MHRBuildTool" -sitePath "C:\inetpub\wwwroot\MHRBuildTool" -sourcePath "C:Web/MHRBuildTool" -port 8080
+                  sshpass -p "${{ secrets.VM_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USERNAME }}@${{ secrets.VM_IP }} powershell.exe -File "C:/Web/deploy-to-iis.ps1" -_siteName "MHRBuildTool" -_sitePath "C:\inetpub\wwwroot\MHRBuildTool" -_sourcePath "C:Web/MHRBuildTool" -_port 8080
 
         env:
             VM_IP: ${{secrets.VM_IP}}
