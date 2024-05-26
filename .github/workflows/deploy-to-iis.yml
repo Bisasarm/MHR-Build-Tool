@@ -22,7 +22,7 @@ jobs:
               run: dotnet restore MHRBuildTool/MHRBuildTool.sln
 
             - name: Build the project and compile application in 'Release' configuration
-              run: dotnet build --configuation Release --no-restore
+              run: dotnet build --configuration Release --no-restore
 
             - name: Publish the project
               run: dotnet publish -c Release -o publish
