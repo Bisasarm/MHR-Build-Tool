@@ -22,10 +22,10 @@ jobs:
               run: dotnet restore MHRBuildTool/MHRBuildTool.sln
 
             - name: Build the project and compile application in 'Release' configuration
-              run: dotnet build --configuration Release --no-restore
+              run: dotnet build MHRBuildTool/MHRBuildTool.sln --configuration Release --no-restore
 
             - name: Publish the project
-              run: dotnet publish -c Release -o publish
+              run: dotnet publish MHRBuildTool/MHRBuildTool.sln -c Release -o publish
 
             - name: Copy files to Azure VM. Including the published project as well as the PowerShell script
               run: |
