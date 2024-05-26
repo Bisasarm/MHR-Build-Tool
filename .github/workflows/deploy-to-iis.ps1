@@ -1,5 +1,5 @@
 ﻿# params festlegen für GitHub Actions
-params (
+param (
     [string]$_siteName,
     [string]$_sitePath,
     [string]$_sourcePath,
@@ -16,7 +16,7 @@ Import-Module WebAdministration
 # Schritt 1:
 
 function Create-IISSiteIfNotExists{
-    params(
+    param(
         [string]$siteName,
         [string]$sitePath,
         [int]$port
