@@ -44,7 +44,7 @@ function Deploy-Application{
         [string]$sourcePath
     )
     # Validierung der Parameter um nukleares Löschen zu verhindern
-    if (-not ($_siteName -and $_sitePath -and $_sourcePath -and $_port)) {
+    if (([string]::IsNullOrEmpty($siteName) -or [string]::IsNullOrEmpty($sitePath) -or [string]::IsNullOrEmpty($sourcePath) )) {
         Write-Error "One or more parameters are null or empty."
         exit 1
     }
