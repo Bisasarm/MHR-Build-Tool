@@ -1,22 +1,48 @@
 ﻿@using MHRBuildTool.Client.ClassLibraries
 @inject NavigationManager Navigation
+@rendermode InteractiveAuto
 
-<div class ="row">
+@*To pass parameter to onclick Lambda is needed*@
+<div @onclick="@(e => showComponentDialog(ArmorBuildcomponent))" class ="row">
     <img src="@ImageUrl" alt="N/A" class="buildComponent col-sm-2" />
     <span class="col-sm-10 buildComponentText">@ArmorBuildcomponent</span>
+</div>
+<div style="display: @IsHiddenComponentDialog" id="divComponentDialog_@ArmorBuildcomponent">
+    <span>@componentDialog</span>
+    <button @onclick="hideComponentDialog">Close</button>
 </div>
 
 @code {
 
 
     [Parameter]
-    public EBuildComponent ArmorBuildcomponent{get; set; }
-
+    public EBuildComponent ArmorBuildcomponent {get; set;}
+    [Parameter]
+    public string IsHiddenComponentDialog {get; set;} = "none";
     private string ImageUrl = string.Empty;
+
     protected override void OnInitialized()
     {
         string baseUri = Navigation.BaseUri;
         ImageUrl = $"{baseUri}/icons/Icon{ArmorBuildcomponent}.png";
+
+    }
+    //TODO: Implement separate dialogs for separate components
+    private string componentDialog = string.Empty;
+    /// <summary>
+    /// Function to show dialog
+    /// </summary>
+    /// <param name="eBuildComponent">Dialog shown depends on Armor Component</param>
+    private void showComponentDialog(EBuildComponent eBuildComponent)
+    {
+        componentDialog = eBuildComponent.ToString();
+        IsHiddenComponentDialog = "inline";
+    }/// <summary>
+     /// Function to hide Dialog
+     /// </summary>
+    private void hideComponentDialog()
+    {
+        IsHiddenComponentDialog = "none";
     }
 
 }
