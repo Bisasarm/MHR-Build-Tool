@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\MHRBuildTool.Client\MHRBuildTool.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.5" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.1" />
   </ItemGroup>
 
 </Project>
